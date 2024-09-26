@@ -1,0 +1,33 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Schedule {
+  createdAt    DateTime            @default(now())
+  deliveryDate DateTime?
+  id           String              @id @default(auto()) @map("_id") @db.ObjectId
+  order        Order?              @relation(fields: [orderId], references: [id])
+  orderId      String?             @db.ObjectId
+  status       EnumScheduleStatus?
+  updatedAt    DateTime            @updatedAt
+}
+
+model Order {
+  createdAt  DateTime   @default(now())
+  customerId String?
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  price      Float?
+  productId  String?
+  quantity   Int?
+  schedules  Schedule[]
+  updatedAt  DateTime   @updatedAt
+}
+
+enum EnumScheduleStatus {
+  Option1
+}
